@@ -1,4 +1,4 @@
-from coco_image_viewer_lib import CocoDataset
+from s01.coco_image_viewer_lib import CocoDataset
 
 
 def auto_complete(file_path):
@@ -6,7 +6,7 @@ def auto_complete(file_path):
 
 
 def main():
-    dataset_folder = auto_complete('./datasets/f4/synth_dataset_training/output')
+    dataset_folder = auto_complete('../datasets/f4/synth_dataset_training/output')
     instances_json_path = "%s/coco_annotations.json" % dataset_folder
     images_path = "%s/images" % dataset_folder
     coco_dataset = CocoDataset(instances_json_path, images_path)

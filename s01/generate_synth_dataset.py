@@ -151,8 +151,6 @@ class ImageComposition():
         self.allowed_output_types = ['.png', '.jpg', '.jpeg']
         self.allowed_background_types = ['.png', '.jpg', '.jpeg']
         self.zero_padding = 8  # 00000027.png, supports up to 100 million images
-        self.mask_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
-        assert len(self.mask_colors) >= self.args.max_foregrounds, 'length of mask_colors should be >= max_foregrounds'
 
     def _validate_and_process_args(self):
 
@@ -181,12 +179,10 @@ class ImageComposition():
     def _validate_and_process_output_directory(self):
         self.output_dir = Path(self.args.output_dir)
         self.images_output_dir = self.output_dir / 'images'
-        self.masks_output_dir = self.output_dir / 'masks'
 
         # Create directories
         self.output_dir.mkdir(exist_ok=True)
         self.images_output_dir.mkdir(exist_ok=True)
-        self.masks_output_dir.mkdir(exist_ok=True)
 
     def _validate_and_process_input_directory(self):
         self.input_dir = Path(self.args.input_dir)
@@ -267,11 +263,10 @@ class ImageComposition():
         shutil.rmtree(self.output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=False)
         (self.output_dir / 'images').mkdir(parents=True, exist_ok=False)
-        (self.output_dir / 'masks').mkdir(parents=True, exist_ok=False)
 
         anns = AnnotationsJsonUtils(self.output_dir)
 
-        # Create all images/masks (with tqdm to have a progress bar)
+        # Create all images (with tqdm to have a progress bar)
         for i in tqdm(range(self.count)):
             # Randomly choose a background
             background_path = random.choice(self.backgrounds)
@@ -284,18 +279,15 @@ class ImageComposition():
                 category = random.choice(list(self.foregrounds_dict[super_category].keys()))
                 foreground_path = random.choice(self.foregrounds_dict[super_category][category])
 
-                # Get the color
-                mask_rgb_color = self.mask_colors[fg_i]
 
                 foregrounds.append({
                     'super_category': super_category,
                     'category': category,
-                    'foreground_path': foreground_path,
-                    'mask_rgb_color': mask_rgb_color
+                    'foreground_path': foreground_path
                 })
 
             # Compose foregrounds and background
-            composite, mask = self._compose_images(foregrounds, background_path, anns)
+            composite, mask = self._compose_images(foregrounds, background_path)
 
             # Create the file name (used for both composite and mask)
             save_filename = f'{i:0{self.zero_padding}}'  # e.g. 00000023.jpg
@@ -306,19 +298,13 @@ class ImageComposition():
             composite = composite.convert('RGB')  # remove alpha
             composite.save(composite_path)
 
-            # Save the mask image to the masks sub-directory
-            mask_filename = f'{save_filename}.png'  # masks are always png to avoid lossy compression
-            mask_path = self.output_dir / 'masks' / mask_filename  # e.g. my_output_dir/masks/00000023.png
-            mask.save(mask_path)
-
-            color_categories = dict()
             image_id = anns.get_image_id(composite_filename, composite.size[0], composite.size[1])
             for fg in foregrounds:
                 anns.get_annotation_id(fg['category'], fg['super_category'], image_id, fg['bbox'], fg['segmentation'])
 
         anns.save()
 
-    def _compose_images(self, foregrounds, background_path, anns):
+    def _compose_images(self, foregrounds, background_path):
         background = Image.open(background_path)
         background = background.convert('RGBA')
 
@@ -363,17 +349,6 @@ class ImageComposition():
             mask_arr = np.array(np.greater(np.array(new_alpha_mask), alpha_threshold), dtype=np.uint8)
             uint8_mask = np.uint8(mask_arr)  # This is composed of 1s and 0s
 
-            # Multiply the mask value (1 or 0) by the color in each RGB channel and combine to get the mask
-            mask_rgb_color = fg['mask_rgb_color']
-            red_channel = uint8_mask * mask_rgb_color[0]
-            green_channel = uint8_mask * mask_rgb_color[1]
-            blue_channel = uint8_mask * mask_rgb_color[2]
-            rgb_mask_arr = np.dstack((red_channel, green_channel, blue_channel))
-            isolated_mask = Image.fromarray(rgb_mask_arr, 'RGB')
-            isolated_alpha = Image.fromarray(uint8_mask * 255, 'L')
-
-            composite_mask = Image.composite(isolated_mask, composite_mask, isolated_alpha)
-
         return composite, composite_mask
 
     def _transform_foreground(self, fg, fg_path):
@@ -398,16 +373,16 @@ if __name__ == "__main__":
     count = 600
 
     training = {'name': 'training',
-                'input_dir': './datasets/f4/synth_dataset_training/input',
-                'output_dir': './datasets/f4/synth_dataset_training/output',
+                'input_dir': '../datasets/f4/synth_dataset_training/input',
+                'output_dir': '../datasets/f4/synth_dataset_training/output',
                 'count': count,
                 'width': 1080 / 2, 'height': 1080 / 2,
                 'max_foregrounds': 1,
                 'output_type': None}
 
     validation = {'name': 'validation',
-                  'input_dir': './datasets/f4/synth_dataset_validation/input',
-                  'output_dir': './datasets/f4/synth_dataset_validation/output',
+                  'input_dir': '../datasets/f4/synth_dataset_validation/input',
+                  'output_dir': '../datasets/f4/synth_dataset_validation/output',
                   'count': count,
                   'width': 1080 / 2, 'height': 1080 / 2,
                   'max_foregrounds': 1,
