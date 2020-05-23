@@ -263,7 +263,7 @@ class ImageComposition():
 
     def _generate_images(self):
 
-        print(f'Generating images with COCO annotations...')
+        print(f'Generating {self.args.name} dataset with COCO annotations...')
         shutil.rmtree(self.output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=False)
         (self.output_dir / 'images').mkdir(parents=True, exist_ok=False)
@@ -397,14 +397,16 @@ class ImageComposition():
 if __name__ == "__main__":
     count = 300
 
-    training = {'input_dir': './datasets/f4/synth_dataset_training/input',
+    training = {'name': 'training',
+                'input_dir': './datasets/f4/synth_dataset_training/input',
                 'output_dir': './datasets/f4/synth_dataset_training/output',
                 'count': count,
                 'width': 1080 / 2, 'height': 1080 / 2,
                 'max_foregrounds': 1,
                 'output_type': None}
 
-    validation = {'input_dir': './datasets/f4/synth_dataset_validation/input',
+    validation = {'name': 'validation',
+                  'input_dir': './datasets/f4/synth_dataset_validation/input',
                   'output_dir': './datasets/f4/synth_dataset_validation/output',
                   'count': count,
                   'width': 1080 / 2, 'height': 1080 / 2,
