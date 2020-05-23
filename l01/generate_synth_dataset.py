@@ -21,7 +21,7 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
 
     theta = random.uniform(0, np.pi)  # Rotation angle
     phi = random.uniform(0, np.pi)
-    # theta = np.pi / 2
+
     cosTheta = np.cos(theta)
     sinTheta = np.sin(theta)
 
@@ -59,7 +59,7 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
 
     # Compute translation matrix
     new_edges = [H @ e for e in edges]
-    new_edges_norm = np.asarray([(e / e[2])[:2] for e in new_edges])  ### CAST edges to int!!!
+    new_edges_norm = np.asarray([(e / e[2])[:2] for e in new_edges])
     tx = new_edges_norm[:, 0].min()
     ty = new_edges_norm[:, 1].min()
 
@@ -70,7 +70,7 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
                   [0, 1, -ty],
                   [0, 0, 1]])  # Translation matrix
 
-    # Inlcude translation in H
+    # Include translation in H
     H = T @ H
 
     # Recompute edges (final)
