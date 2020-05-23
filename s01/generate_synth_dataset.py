@@ -28,8 +28,8 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
     cosPhi = np.cos(phi)
     sinPhi = np.sin(phi)
 
-    sx = random.uniform(0.5, max_scaling_factor)  # Scaling x
-    sy = random.uniform(0.5, max_scaling_factor)  # Scaling y
+    sx = random.uniform(0.25, max_scaling_factor)  # Scaling x
+    sy = random.uniform(0.25, max_scaling_factor)  # Scaling y
     p1 = random.uniform(0., .001)
     p2 = random.uniform(0., .001)
 
@@ -278,7 +278,6 @@ class ImageComposition():
                 super_category = random.choice(list(self.foregrounds_dict.keys()))
                 category = random.choice(list(self.foregrounds_dict[super_category].keys()))
                 foreground_path = random.choice(self.foregrounds_dict[super_category][category])
-
 
                 foregrounds.append({
                     'super_category': super_category,
