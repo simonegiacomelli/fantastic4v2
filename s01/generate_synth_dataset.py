@@ -370,7 +370,7 @@ class ImageComposition():
 
 
 if __name__ == "__main__":
-    count = 300
+    count = 600
 
     training = {'name': 'training',
                 'input_dir': '../datasets/f4/synth_dataset_training/input',
