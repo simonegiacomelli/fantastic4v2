@@ -369,12 +369,28 @@ class ImageComposition():
 
 
 if __name__ == "__main__":
-    count = 600
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Synthetic Dataset generation")
+    # parser.add_argument("--input_dir", type=str, dest="input_dir", required=True, help="The input directory. \
+    #                     This contains a 'backgrounds' directory of pngs or jpgs, and a 'foregrounds' directory which \
+    #                     contains supercategory directories (e.g. 'animal', 'vehicle'), each of which contain category \
+    #                     directories (e.g. 'horse', 'bear'). Each category directory contains png images of that item on a \
+    #                     transparent background (e.g. a grizzly bear on a transparent background).")
+    # parser.add_argument("--output_dir", type=str, dest="output_dir", required=True, help="The directory where images, masks, \
+    #                     and json files will be placed")
+    parser.add_argument("--count", type=int, dest="count", required=False, help="number of composed images to create",
+                        default=10)
+    # parser.add_argument("--width", type=int, dest="width", required=True, help="output image pixel width")
+    # parser.add_argument("--height", type=int, dest="height", required=True, help="output image pixel height")
+    # parser.add_argument("--output_type", type=str, dest="output_type", help="png or jpg (default)")
+
+    args = parser.parse_args()
 
     training = {'name': 'training',
                 'input_dir': '../datasets/f4/synth_dataset_training/input',
                 'output_dir': '../datasets/f4/synth_dataset_training/output',
-                'count': count,
+                'count': args.count,
                 'width': 1080 / 2, 'height': 1080 / 2,
                 'max_foregrounds': 1,
                 'output_type': None}
@@ -382,7 +398,7 @@ if __name__ == "__main__":
     validation = {'name': 'validation',
                   'input_dir': '../datasets/f4/synth_dataset_validation/input',
                   'output_dir': '../datasets/f4/synth_dataset_validation/output',
-                  'count': count,
+                  'count': args.count,
                   'width': 1080 / 2, 'height': 1080 / 2,
                   'max_foregrounds': 1,
                   'output_type': None}
@@ -394,6 +410,6 @@ if __name__ == "__main__":
 
     all = [training, validation]
     for dictionary in all:
-        args = Arguments()
-        args.__dict__ = dictionary
-        ImageComposition(args).main()
+        d = Arguments()
+        d.__dict__ = dictionary
+        ImageComposition(d).main()
