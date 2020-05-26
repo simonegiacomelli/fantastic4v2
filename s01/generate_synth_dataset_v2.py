@@ -198,24 +198,25 @@ class ImageComposition():
 
         for super_category_dir in self.foregrounds_dir.iterdir():
             if not super_category_dir.is_dir():
-                warnings.warn(
-                    f'file found in foregrounds directory (expected super-category directories), ignoring: {super_category_dir}')
+                raise Exception(f'file found in foregrounds directory '
+                                f'(expected super-category directories), '
+                                f'ignoring: {super_category_dir}')
                 continue
 
             # This is a super category directory
             for category_dir in super_category_dir.iterdir():
                 if not category_dir.is_dir():
-                    warnings.warn(
+                    raise Exception(
                         f'file found in super category directory (expected category directories), ignoring: {category_dir}')
                     continue
 
                 # This is a category directory
                 for image_file in category_dir.iterdir():
                     if not image_file.is_file():
-                        warnings.warn(f'a directory was found inside a category directory, ignoring: {str(image_file)}')
+                        raise Exception(f'a directory was found inside a category directory, ignoring: {str(image_file)}')
                         continue
                     if image_file.suffix != '.png':
-                        warnings.warn(f'foreground must be a .png file, skipping: {str(image_file)}')
+                        raise Exception(f'foreground must be a .png file, skipping: {str(image_file)}')
                         continue
 
                     # Valid foreground image, add to foregrounds_dict
