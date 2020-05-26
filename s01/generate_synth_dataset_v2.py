@@ -213,7 +213,8 @@ class ImageComposition():
                 # This is a category directory
                 for image_file in category_dir.iterdir():
                     if not image_file.is_file():
-                        raise Exception(f'a directory was found inside a category directory, ignoring: {str(image_file)}')
+                        raise Exception(
+                            f'a directory was found inside a category directory, ignoring: {str(image_file)}')
                         continue
                     if image_file.suffix != '.png':
                         raise Exception(f'foreground must be a .png file, skipping: {str(image_file)}')
@@ -266,6 +267,7 @@ class ImageComposition():
 
             num_foregrounds = random.randint(1, self.args.max_foregrounds)
             foregrounds = []
+            self.preload_categories(anns)
             for fg_i in range(num_foregrounds):
                 # Randomly choose a foreground
                 super_category = random.choice(list(self.foregrounds_dict.keys()))
@@ -359,6 +361,12 @@ class ImageComposition():
     def main(self):
         self._validate_and_process_args()
         self._generate_images()
+
+    def preload_categories(self, anns):
+        fg = self.foregrounds_dict
+        classes = sorted([(sc, cl) for sc in fg for cl in fg[sc]])
+        for cl in classes:
+            anns.get_category_id(cl[1], cl[0])
 
 
 if __name__ == "__main__":
