@@ -18,3 +18,8 @@ def download_youtube_video(youtube_id, youtube_format, youtube_file):
         print(f'youtube video already present')
 
 
+def download_google_drive_file(file_id, file_path):
+    import gdown
+    if not Path(file_path).exists():
+        print('downloading model weights')
+        gdown.download(f'https://drive.google.com/uc?id={file_id}', file_path, quiet=False)
