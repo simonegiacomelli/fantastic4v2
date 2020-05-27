@@ -3,10 +3,6 @@ from pathlib import Path
 
 now = datetime.now()
 
-current_time = now.strftime("%H:%M:%S")
-print('called!', __file__, )
-print("Current Time =", current_time)
-
 import sys
 
 
