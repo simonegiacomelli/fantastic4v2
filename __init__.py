@@ -1,9 +1,5 @@
-from datetime import datetime
-from pathlib import Path
-
-now = datetime.now()
-
 import sys
+from pathlib import Path
 
 
 def add_sys_path(p):
