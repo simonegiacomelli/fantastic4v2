@@ -41,7 +41,7 @@ def _pip(args):
 def install_detectron2_colab():
     try:
         import detectron2
-        return True
+        return
     except:
         print('installing detectron2')
 
@@ -66,6 +66,11 @@ def install_detectron2_colab():
 
 
 def install_gmqtt():
+    try:
+        import gmqtt
+        return
+    except:
+        print('installing gmqtt')
     _pip(['install', 'gmqtt'])
 
 
