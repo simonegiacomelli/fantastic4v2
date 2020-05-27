@@ -30,18 +30,20 @@ def download_google_drive_file(file_id, file_path):
         gdown.download(f'https://drive.google.com/uc?id={file_id}', file_path, quiet=False)
 
 
+def _pip(args):
+    import subprocess
+    import sys
+
+    subprocess.check_call([sys.executable, "-m", "pip"] + args)
+    # , stdout=sys.stdout, stderr=sys.stderr) <-- doesn't work with Colab
+
+
 def install_detectron2_colab():
     try:
         import detectron2
         return True
     except:
         print('installing detectron2')
-    import subprocess
-    import sys
-
-    def pip(args):
-        subprocess.check_call([sys.executable, "-m", "pip"] + args)
-        # , stdout=sys.stdout, stderr=sys.stderr) <-- doesn't work with Colab
 
     commands = """
 !pip install -U torch==1.5 torchvision==0.6 -f https://download.pytorch.org/whl/cu101/torch_stable.html
@@ -60,7 +62,11 @@ def install_detectron2_colab():
         header = '!pip '
         if c.startswith(header):
             args = c[len(header):].split(' ')
-            pip(args)
+            _pip(args)
+
+
+def install_gmqtt():
+    _pip(['install', 'gmqtt'])
 
 
 if __name__ == '__main__':
