@@ -74,7 +74,7 @@ def install_gmqtt():
     _pip(['install', 'gmqtt'])
 
 
-def video_frames(filename, start_frame=0, count=None, apply_COLOR_RGB2BGR=True):
+def video_frames(filename, start_frame=0, count=None, apply_COLOR_RGB2BGR=True, frame_list=None):
     import cv2
     import itertools
 
@@ -82,9 +82,14 @@ def video_frames(filename, start_frame=0, count=None, apply_COLOR_RGB2BGR=True):
     if start_frame > 0:
         video.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
 
+    if frame_list and count is None:
+        count = len(frame_list)
+
     for i in itertools.count():
         if i == count:
             break
+        if frame_list:
+            video.set(cv2.CAP_PROP_POS_FRAMES, frame_list[i])
         success, frame = video.read()
         if not success:
             if count is None:
@@ -95,6 +100,10 @@ def video_frames(filename, start_frame=0, count=None, apply_COLOR_RGB2BGR=True):
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         yield frame
     video.release()
+
+
+frame_index_list = [2, 177, 764, 1676, 2831, 3212, 3874, 4165, 4357, 4677
+    , 4823, 5247, 5967, 5978, 6574, 6688, 7029, 7527, 8018, 8319, 9017]
 
 
 def new_detectron2_predictor(model_weights_file, NUM_CLASSES=2):
