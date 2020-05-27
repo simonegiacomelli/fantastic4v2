@@ -91,6 +91,7 @@ def video_frames(filename, start_frame=0, count=None):
                 break
             else:
                 raise Exception('Frame index out of bounds ' + (i + start_frame))
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         yield frame
     video.release()
 
