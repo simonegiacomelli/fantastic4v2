@@ -96,6 +96,37 @@ def video_frames(filename, start_frame=0, count=None):
     video.release()
 
 
+def new_detectron2_predictor(model_weights_file, NUM_CLASSES=2):
+    import detectron2
+    from detectron2.utils.logger import setup_logger
+    setup_logger()
+
+    import torch, torchvision
+
+    from detectron2 import model_zoo
+    from detectron2.engine import DefaultPredictor
+    from detectron2.config import get_cfg
+
+    cfg = get_cfg()
+    cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
+    cfg.DATASETS.TRAIN = ('synth_train',)
+    cfg.DATASETS.TEST = ('synth_val',)
+    cfg.DATALOADER.NUM_WORKERS = 2
+    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
+        "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")  # Let training initialize from model zoo
+    cfg.SOLVER.IMS_PER_BATCH = 2
+    cfg.SOLVER.BASE_LR = 0.02
+    cfg.SOLVER.MAX_ITER = 300
+    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = NUM_CLASSES
+    cfg.MODEL.WEIGHTS = model_weights_file
+    cfg.MODEL.RETINANET.SCORE_THRESH_TEST = 0.5
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
+    cfg.MODEL.PANOPTIC_FPN.COMBINE.INSTANCES_CONFIDENCE_THRESH = 0.5
+    cfg.freeze()
+    return DefaultPredictor(cfg)
+
+
 if __name__ == '__main__':
     print('testing functions')
     install_detectron2_colab()
