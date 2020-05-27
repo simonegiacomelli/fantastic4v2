@@ -74,6 +74,27 @@ def install_gmqtt():
     _pip(['install', 'gmqtt'])
 
 
+def video_frames(filename, start_frame=0, count=None):
+    import cv2
+    import itertools
+
+    video = cv2.VideoCapture(filename)
+    if start_frame > 0:
+        video.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+
+    for i in itertools.count():
+        if i == count:
+            break
+        success, frame = video.read()
+        if not success:
+            if count is None:
+                break
+            else:
+                raise Exception('Frame index out of bounds ' + (i + start_frame))
+        yield frame
+    video.release()
+
+
 if __name__ == '__main__':
     print('testing functions')
     install_detectron2_colab()
