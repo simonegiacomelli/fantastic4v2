@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+
 def download_youtube_video(youtube_id, youtube_format, youtube_file):
     try:
         import youtube_dl
@@ -34,7 +35,7 @@ def install_detectron2_colab():
     import sys
 
     def pip(args):
-        subprocess.check_call([sys.executable, "-m", "pip"] + args)
+        subprocess.check_call([sys.executable, "-m", "pip"] + args, stdout=sys.stdout, stderr=sys.stderr)
 
     commands = """
 !pip install -U torch==1.5 torchvision==0.6 -f https://download.pytorch.org/whl/cu101/torch_stable.html
