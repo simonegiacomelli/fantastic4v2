@@ -35,7 +35,8 @@ def install_detectron2_colab():
     import sys
 
     def pip(args):
-        subprocess.check_call([sys.executable, "-m", "pip"] + args, stdout=sys.stdout, stderr=sys.stderr)
+        subprocess.check_call([sys.executable, "-m", "pip"] + args )
+        #, stdout=sys.stdout, stderr=sys.stderr) <-- doesn't work with Colab
 
     commands = """
 !pip install -U torch==1.5 torchvision==0.6 -f https://download.pytorch.org/whl/cu101/torch_stable.html
