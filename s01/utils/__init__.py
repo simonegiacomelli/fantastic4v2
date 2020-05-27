@@ -39,7 +39,7 @@ def install_detectron2_colab():
     commands = """
 !pip install -U torch==1.5 torchvision==0.6 -f https://download.pytorch.org/whl/cu101/torch_stable.html
 !pip install cython pyyaml==5.1
-!pip install -U 'git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI'
+!pip install -U git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI
 
 !pip uninstall -y opencv-python
 !pip uninstall -y opencv-contrib-python
