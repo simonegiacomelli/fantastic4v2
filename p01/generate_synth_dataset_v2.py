@@ -370,6 +370,7 @@ class ImageComposition():
 
 
 if __name__ == "__main__":
+    print('Shalini version')
     import argparse
 
     parser = argparse.ArgumentParser(description="Synthetic Dataset generation")
