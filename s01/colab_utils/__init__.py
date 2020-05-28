@@ -138,8 +138,8 @@ def new_detectron2_predictor(model_weights_file, NUM_CLASSES=2):
 
 
 class VideoFrames:
-    import cv2
     def __init__(self, video_input):
+        import cv2
         video = cv2.VideoCapture(video_input)
         self.width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -150,9 +150,9 @@ class VideoFrames:
 
 
 class VideoWriter:
-    import cv2
-    from pathlib import Path
     def __init__(self, output_fname, frame_size=(1024, 768), fps=1):
+        from pathlib import Path
+        import cv2
         of = Path(output_fname)
         if of.exists():
             of.unlink()
