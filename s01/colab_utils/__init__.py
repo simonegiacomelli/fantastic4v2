@@ -137,6 +137,52 @@ def new_detectron2_predictor(model_weights_file, NUM_CLASSES=2):
     return DefaultPredictor(cfg)
 
 
+class VideoFrames:
+    import cv2
+    def __init__(self, video_input):
+        video = cv2.VideoCapture(video_input)
+        self.width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.fps = video.get(cv2.CAP_PROP_FPS)
+        self.frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.frame_size = (self.width, self.height)
+        video.release()
+
+
+class VideoWriter:
+    import cv2
+    from pathlib import Path
+    def __init__(self, output_fname, frame_size=(1024, 768), fps=1):
+        of = Path(output_fname)
+        if of.exists():
+            of.unlink()
+
+        if output_fname.endswith('.avi'):
+            encoder = 'XVID'
+        elif output_fname.endswith('.mkv'):
+            encoder = 'x264'
+        elif encoder.endswith('.mpg') or encoder.endswith('.mpeg'):
+            encoder = 'MPEG'
+        else:
+            encoder = 'XVID'
+
+        self.output_file = cv2.VideoWriter(
+            filename=output_fname,
+            # some installation of opencv may not support x264 (due to its license),
+            # you can try other format (e.g. MPEG o XVID o x264)
+            fourcc=cv2.VideoWriter_fourcc(*encoder),
+            fps=fps,
+            frameSize=frame_size,
+            isColor=True,
+        )
+
+    def write(self, frame):
+        self.output_file.write(frame)
+
+    def release(self):
+        self.output_file.release()
+        self.output_file = None
+
 if __name__ == '__main__':
     youtube_file = 'video.mp4'
     download_youtube_video('JZdqjtWsL0U', '"best[height=360]"', youtube_file)
