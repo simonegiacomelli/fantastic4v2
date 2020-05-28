@@ -140,13 +140,44 @@ def new_detectron2_predictor(model_weights_file, NUM_CLASSES=2):
 class VideoFrames:
     def __init__(self, video_input):
         import cv2
-        video = cv2.VideoCapture(video_input)
+        self.video = cv2.VideoCapture(video_input)
+        video = self.video
         self.width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.fps = video.get(cv2.CAP_PROP_FPS)
         self.frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
         self.frame_size = (self.width, self.height)
-        video.release()
+
+    def generator(self, start_frame=0, count=None, apply_COLOR_RGB2BGR=True, frame_list=None,
+                  enumerate_frame_index=False):
+        import cv2
+        import itertools
+        if start_frame > 0:
+            self.video.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+
+        if frame_list and count is None:
+            count = len(frame_list)
+
+        for i in itertools.count():
+            if i == count:
+                break
+            if frame_list:
+                frame_index = frame_list[i]
+                self.video.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
+            else:
+                frame_index = start_frame + i
+            success, frame = self.video.read()
+            if not success:
+                if count is None:
+                    break
+                else:
+                    raise Exception('Frame index out of bounds ' + (i + start_frame))
+            if apply_COLOR_RGB2BGR:
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+            if enumerate_frame_index:
+                yield frame_index, frame
+            else:
+                yield frame
 
 
 class VideoWriter:
@@ -182,6 +213,7 @@ class VideoWriter:
     def release(self):
         self.output_file.release()
         self.output_file = None
+
 
 if __name__ == '__main__':
     youtube_file = 'video.mp4'
