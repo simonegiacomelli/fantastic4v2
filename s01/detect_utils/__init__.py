@@ -316,7 +316,7 @@ def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_
         idx += 1
         if not ok:
             continue
-        a = box[(len(box) - 2) % len(box)]
+        a = box[0]
         idxstr = str(idx) if write_index else ''
         putText(target, f'{idxstr}{label}', a, color)
     return target
