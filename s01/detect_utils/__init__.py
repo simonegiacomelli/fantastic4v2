@@ -109,7 +109,7 @@ def match_histograms(src_image, ref_image):
     return image_after_matching
 
 
-def checkInstance(instance, template, detector, matcher, kp_template, des_template, lowe_thresh=1.0):
+def checkInstance(instance, template, detector, matcher, kp_template, des_template, lowe_thresh=0.9):
     kp_instance, des_instance = detector.detectAndCompute(instance, None)
     ###cv2.drawKeypoints(instance, kp_instance, None)
 
