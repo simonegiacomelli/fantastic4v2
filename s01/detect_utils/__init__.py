@@ -122,10 +122,10 @@ def checkInstance(instance, template, detector, matcher, kp_template, des_templa
     for m, n in matches:
         if m.distance < lowe_thresh * n.distance:
             good_matches.append(m)
-    print("total matches", len(matches), 'good matches', len(good_matches))
+    # print("total matches", len(matches), 'good matches', len(good_matches))
 
     if len(good_matches) < 8:  ## FINE TUNE!!!
-        print("Too less good matches")
+        # print("Too less good matches")
         return False, None
 
     """if len(good_matches) / len(matches) < 0.2:  ## FINE TUNE!!!
@@ -166,7 +166,7 @@ def checkInstance(instance, template, detector, matcher, kp_template, des_templa
     ssim_thresh = 0.4  ### SET AS METHOD PARAMETERS !!!
 
     # With too less correspondences the template cannot be considered matchable
-    print('outsiders', outsiders, 'n_inlier', n_inlier, 'proportion', outsiders / n_inlier)
+    # print('outsiders', outsiders, 'n_inlier', n_inlier, 'proportion', outsiders / n_inlier)
     if (outsiders / n_inlier < out_proportion):
         rectified = cv2.warpPerspective(instance, H, (template.shape[1], template.shape[0]))
 
@@ -185,13 +185,13 @@ def checkInstance(instance, template, detector, matcher, kp_template, des_templa
             ax = fig.add_subplot(1, 3, 3)
             ax.imshow(template)"""
 
-            print('accepte')
+            # print('accepted')
             return True, sift_bb
         else:
-            print('not accepted, because of structural similarity')
+            # print('not accepted, because of structural similarity')
             return False, sift_bb
     else:
-        print('not accepted because of outliers / n_inliers proportion')
+        # print('not accepted because of outliers / n_inliers proportion')
         return False, None
 
 
@@ -242,7 +242,7 @@ def fittAbbestia(target, instances, templates):
         box = enlarge_box(box)
         instance = target[box[1]:box[3], box[0]:box[2], :]
 
-        # print('box',box,'target.shape',target.shape,'instance.shape',instance.shape)
+        # ###print('box',box,'target.shape',target.shape,'instance.shape',instance.shape)
         # target.shape (720, 1280, 3) box [460  34 618 119] instance.shape (85, 158, 3)
 
         def transform_sift_point(p):
@@ -308,7 +308,7 @@ def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_
         idx += 1
         if not ok:
             continue
-        print('sift foundings box', idx, 'coords', box)
+        # print('sift foundings box', idx, 'coords', box)
         for i in range(len(box)):
             a = box[i]
             b = box[(i + 1) % len(box)]
