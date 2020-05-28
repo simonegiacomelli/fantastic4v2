@@ -323,16 +323,25 @@ def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_
         putText(target, f'{idxstr}{label}', (a[0],a[1]-9), color)
     return target
 
-def drawDetectronOutput(target, instances, color=(0, 0, 255)):
+def drawDetectronOutput(target, instances, colors=[(0, 0, 255)], write_index=False):
     target = Image.fromarray(target)
     draw = ImageDraw.Draw(target)
     boxes = [instances[i].get('pred_boxes').tensor.squeeze().numpy().astype(int) for i in range(len(instances))]
-    for box in boxes:
+    classes = [instances[i].get('pred_classes').numpy()[0] for i in range(len(instances))]
+
+    def get_color(index):
+      class_index = classes[index]
+      return colors[class_index % len(colors)]
+
+    for i, box in enumerate(boxes):
+        color = get_color(i)
         draw.line((box[0], box[1]) + (box[0], box[3]), fill=color, width=6)
         draw.line((box[0], box[1]) + (box[2], box[1]), fill=color, width=6)
         draw.line((box[2], box[3]) + (box[2], box[1]), fill=color, width=6)
         draw.line((box[2], box[3]) + (box[0], box[3]), fill=color, width=6)
     target = np.array(target)
-    for i, box in enumerate(boxes):
-        putText(target, f'box{i}', (box[0] + 5, box[1] + 25), color)
+    if write_index:
+      for i, box in enumerate(boxes):
+        idxstr = str(i) if write_index else ''
+        putText(target, f'{idxstr}{classes[i]}', (box[0] + 5, box[1] + 25), get_color(i))
     return target
