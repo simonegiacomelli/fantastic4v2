@@ -138,7 +138,7 @@ def checkInstance(instance, template, detector, matcher, kp_template, des_templa
     try:
         Hinv = np.linalg.inv(H)
     except Exception as e:
-        raise Exception('Original exception ' + str(e))
+        raise Exception(f'Original exception type:{type(e)} ' + str(e))
         return False, None
 
     inlier_mask = inlier_mask.flatten().astype(bool)
