@@ -237,7 +237,7 @@ def fittAbbestia(target, instances, templates):
         return (c0, r0, c1, r1)
 
     for i in range(0, len(instances)):
-        box = instances[i].get('pred_boxes').tensor.squeeze().numpy().astype(int)
+        box = instances[i]['pred_boxes']
 
         box = enlarge_box(box)
         instance = target[box[1]:box[3], box[0]:box[2], :]
@@ -329,8 +329,8 @@ def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_
 def drawDetectronOutput(target, instances, colors=[(0, 0, 255)], write_index=False):
     target = Image.fromarray(target)
     draw = ImageDraw.Draw(target)
-    boxes = [instances[i].get('pred_boxes').tensor.squeeze().numpy().astype(int) for i in range(len(instances))]
-    classes = [instances[i].get('pred_classes').numpy()[0] for i in range(len(instances))]
+    boxes = [instances[i]['pred_boxes'] for i in range(len(instances))]
+    classes = [instances[i]['pred_classes'] for i in range(len(instances))]
 
     def get_color(index):
         class_index = classes[index]
@@ -348,3 +348,17 @@ def drawDetectronOutput(target, instances, colors=[(0, 0, 255)], write_index=Fal
             idxstr = str(i) if write_index else ''
             putText(target, f'{idxstr}{classes[i]}', (box[0] + 5, box[1] + 25), get_color(i))
     return target
+
+
+def clean_predictor_output(outputs):
+    def extract(i):
+        return {
+            'pred_boxes': list(i.get('pred_boxes').tensor.squeeze().numpy().astype(int)),
+            'pred_classes': i.get('pred_classes').numpy()[0]
+        }
+
+    instances = outputs["instances"].to("cpu")
+    instances.remove('pred_masks')
+
+    res = [extract(instances[i]) for i in range(len(instances))]
+    return res
