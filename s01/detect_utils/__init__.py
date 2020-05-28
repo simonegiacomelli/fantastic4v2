@@ -296,7 +296,7 @@ def draw_bbs(target, accepted, boxes, labels):
     return target
 
 
-def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255)):
+def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_index=False):
     target = Image.fromarray(target)
     draw = ImageDraw.Draw(target)
     idx = -1
@@ -316,8 +316,9 @@ def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255)):
         idx += 1
         if not ok:
             continue
-        a = box[len(box) - 1]
-        putText(target, f'{idx} {label}', a, color)
+        a = box[(len(box) - 2) % len(box)]
+        idxstr = str(idx) if write_index else ''
+        putText(target, f'{idxstr}{label}', a, color)
     return target
 
 
