@@ -296,6 +296,8 @@ def draw_bbs(target, accepted, boxes, labels):
     return target
 
 
+
+
 def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_index=False):
     target = Image.fromarray(target)
     draw = ImageDraw.Draw(target)
@@ -318,9 +320,8 @@ def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_
             continue
         a = box[0]
         idxstr = str(idx) if write_index else ''
-        putText(target, f'{idxstr}{label}', a, color)
+        putText(target, f'{idxstr}{label}', (a[0],a[1]-9), color)
     return target
-
 
 def drawDetectronOutput(target, instances, color=(0, 0, 255)):
     target = Image.fromarray(target)
