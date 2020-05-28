@@ -192,7 +192,7 @@ class VideoWriter:
             encoder = 'XVID'
         elif output_fname.endswith('.mkv'):
             encoder = 'x264'
-        elif encoder.endswith('.mpg') or encoder.endswith('.mpeg'):
+        elif output_fname.endswith('.mpg') or output_fname.endswith('.mpeg'):
             encoder = 'MPEG'
         else:
             encoder = 'XVID'
