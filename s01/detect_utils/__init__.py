@@ -249,8 +249,8 @@ def fittAbbestia(target, instances, templates):
             x_bad = [x for x in all_x if x < 0 or x > patch.shape[1] * 1.1]
             y_bad = [y for y in all_y if y < 0 or y > patch.shape[0] * 1.1]
             ok = len(x_bad) == 0 and len(y_bad) == 0
-            if not ok:
-                print('sift bb not ok', patch.shape, x_bad, y_bad, bb)
+            # if not ok:
+            #     print('sift bb not ok', patch.shape, x_bad, y_bad, bb)
             return ok
 
         def transform_sift_point(p):
