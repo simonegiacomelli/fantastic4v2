@@ -135,7 +135,11 @@ def checkInstance(instance, template, detector, matcher, kp_template, des_templa
     template_pts = np.array([kp_template[p.trainIdx].pt for p in good_matches], dtype=float).reshape(-1, 1, 2)
 
     H, inlier_mask = cv2.findHomography(instance_pts, template_pts, cv2.RANSAC, ransacReprojThreshold=3.0)
-    Hinv = np.linalg.inv(H)
+    try:
+        Hinv = np.linalg.inv(H)
+    except Exception as e:
+        raise Exception('Original exception ' + str(e))
+        return False, None
 
     inlier_mask = inlier_mask.flatten().astype(bool)
     n_inlier = np.count_nonzero(inlier_mask)
@@ -296,8 +300,6 @@ def draw_bbs(target, accepted, boxes, labels):
     return target
 
 
-
-
 def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_index=False):
     target = Image.fromarray(target)
     draw = ImageDraw.Draw(target)
@@ -320,8 +322,9 @@ def drawSiftBoxes(target, accepted, boxes, labels, color=(255, 255, 255), write_
             continue
         a = box[0]
         idxstr = str(idx) if write_index else ''
-        putText(target, f'{idxstr}{label}', (a[0],a[1]-9), color)
+        putText(target, f'{idxstr}{label}', (a[0], a[1] - 9), color)
     return target
+
 
 def drawDetectronOutput(target, instances, colors=[(0, 0, 255)], write_index=False):
     target = Image.fromarray(target)
@@ -330,8 +333,8 @@ def drawDetectronOutput(target, instances, colors=[(0, 0, 255)], write_index=Fal
     classes = [instances[i].get('pred_classes').numpy()[0] for i in range(len(instances))]
 
     def get_color(index):
-      class_index = classes[index]
-      return colors[class_index % len(colors)]
+        class_index = classes[index]
+        return colors[class_index % len(colors)]
 
     for i, box in enumerate(boxes):
         color = get_color(i)
@@ -341,7 +344,7 @@ def drawDetectronOutput(target, instances, colors=[(0, 0, 255)], write_index=Fal
         draw.line((box[2], box[3]) + (box[0], box[3]), fill=color, width=6)
     target = np.array(target)
     if write_index:
-      for i, box in enumerate(boxes):
-        idxstr = str(i) if write_index else ''
-        putText(target, f'{idxstr}{classes[i]}', (box[0] + 5, box[1] + 25), get_color(i))
+        for i, box in enumerate(boxes):
+            idxstr = str(i) if write_index else ''
+            putText(target, f'{idxstr}{classes[i]}', (box[0] + 5, box[1] + 25), get_color(i))
     return target
