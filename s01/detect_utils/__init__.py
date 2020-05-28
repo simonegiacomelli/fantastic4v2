@@ -246,11 +246,11 @@ def fittAbbestia(target, instances, templates):
         # target.shape (720, 1280, 3) box [460  34 618 119] instance.shape (85, 158, 3)
         def is_bb_inside_patch(bb):
             all_x, all_y = zip(*bb)
-            x_bad_count = len([x for x in all_x if x < 0 or x > patch.shape[1]])
-            y_bad_count = len([y for y in all_y if y < 0 or y > patch.shape[0]])
-            ok = x_bad_count == 0 and y_bad_count == 0
+            x_bad = [x for x in all_x if x < 0 or x > patch.shape[1] * 1.1]
+            y_bad = [y for y in all_y if y < 0 or y > patch.shape[0] * 1.1]
+            ok = len(x_bad) == 0 and len(y_bad) == 0
             if not ok:
-                print('sift bb not ok', bb)
+                print('sift bb not ok', patch.shape, x_bad, y_bad, bb)
             return ok
 
         def transform_sift_point(p):
