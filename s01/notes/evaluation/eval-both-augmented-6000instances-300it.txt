@@ -1,0 +1,4 @@
+!cd fantastic4v2/s01 && python generate_synth_dataset_v3.py --name training   --count 6000
+!cd fantastic4v2/s01 && python generate_synth_dataset_v3.py --name validation --count 1000
+
+
