@@ -83,8 +83,14 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
     return out_pil, new_edges_norm
 
 
+def poly_area(x, y):
+    return 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
+
+
 def calc_area(bbox):
-    return 1234.5
+    x = [p for i, p in enumerate(bbox) if (i % 2) == 0]
+    y = [p for i, p in enumerate(bbox) if (i % 2) == 1]
+    return poly_area(x, y)
 
 
 class AnnotationsJsonUtils:
