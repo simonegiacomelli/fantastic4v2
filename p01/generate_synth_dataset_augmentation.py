@@ -84,37 +84,37 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
 
     return out_pil, new_edges_norm
 
-def Image_augmentation(dataset,augmentation_type,HSV_value,alpha,beta,blur_value,folder,aug):
-    if aug == True:
+# def Image_augmentation(dataset,augmentation_type,HSV_value,alpha,beta,blur_value,folder,aug):
+#     if aug == True:
     
-        for d in dataset:
-            print(d["file_name"])
-            img = skimage.io.imread(d["file_name"])
-            if augmentation_type == 'HSV':
-                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-                h, s, v = cv2.split(hsv)
-                lim = 255 - HSV_value
-                v[v > lim] = 255
-                v[v <= lim] += HSV_value
-                final_hsv = cv2.merge((h, s, v))
-                img_hsv = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
-                cv2.imwrite("%s" % (folder + '/images'+'hsv'+ d["file_name"][-13:]), img_hsv)
+#         for d in dataset:
+#             # print(d["file_name"])
+#             img = skimage.io.imread(d["file_name"])
+#             if augmentation_type == 'HSV':
+#                 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+#                 h, s, v = cv2.split(hsv)
+#                 lim = 255 - HSV_value
+#                 v[v > lim] = 255
+#                 v[v <= lim] += HSV_value
+#                 final_hsv = cv2.merge((h, s, v))
+#                 img_hsv = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
+#                 cv2.imwrite("%s" % (folder + '/images'+'hsv'+ d["file_name"][-13:]), img_hsv)
             
-            elif augmentation_type == 'contrast':
-                new_image = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
-                cv2.imwrite("%s" % (folder + '/images'+ 'con' + 'mb' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
+#             elif augmentation_type == 'contrast':
+#                 new_image = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+#                 cv2.imwrite("%s" % (folder + '/images'+ 'con' + 'mb' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
 
-            elif augmentation_type == 'median_blur':
-                print('working')
-                new_image= cv2.blur(img,blur_value)
-                cv2.imwrite("%s" % (folder + '/images'+ 'mb' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
+#             elif augmentation_type == 'median_blur':
+#                 print('working')
+#                 new_image= cv2.blur(img,blur_value)
+#                 cv2.imwrite("%s" % (folder + '/images'+ 'mb' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
             
-            elif augmentation_type == 'blur':
-                new_image= cv2.blur(img,(blur_value,blur_value))
-                cv2.imwrite("%s" % (folder + '/images'+ 'b' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
-        else:
-            return
-    return
+#             elif augmentation_type == 'blur':
+#                 new_image= cv2.blur(img,(blur_value,blur_value))
+#                 cv2.imwrite("%s" % (folder + '/images'+ 'b' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
+#         else:
+#             return
+#     return
 
 
 
@@ -422,22 +422,22 @@ if __name__ == "__main__":
     #                     and json files will be placed")
     parser.add_argument("--count", type=int, dest="count", required=False, help="number of composed images to create",
                         default=10)
-    parser.add_argument("--dataset", type=str, dest="dataset", required=False, help="number of composed images to create",
-                        default='dataset_dicts')
-    parser.add_argument("--augmentation_type", type=str, dest="augmentation_type", required=False, help="number of composed images to create",
-                        default='median_blur') 
-    parser.add_argument("--HSV_value", type=int, dest="HSV_value", required=False, help="number of composed images to create",
-                        default=10)  
-    parser.add_argument("--alpha", type=float, dest="alpha", required=False, help="number of composed images to create",
-                        default=1.5)  
-    parser.add_argument("--beta", type=int, dest="beta", required=False, help="number of composed images to create",
-                        default=10)  
-    parser.add_argument("--blur_value", type=int, dest="blur_value", required=False, help="number of composed images to create",
-                        default=5) 
-    parser.add_argument("--folder", type=str, dest="folder", required=False, help="number of composed images to create",
-                        default='train_folderr') 
-    parser.add_argument("--aug", type=bool, dest="aug", required=False, help="aug",
-                        default='False') 
+    # parser.add_argument("--dataset", type=str, dest="dataset", required=False, help="number of composed images to create",
+    #                     default='dataset_dicts')
+    # parser.add_argument("--augmentation_type", type=str, dest="augmentation_type", required=False, help="number of composed images to create",
+    #                     default='median_blur') 
+    # parser.add_argument("--HSV_value", type=int, dest="HSV_value", required=False, help="number of composed images to create",
+    #                     default=10)  
+    # parser.add_argument("--alpha", type=float, dest="alpha", required=False, help="number of composed images to create",
+    #                     default=1.5)  
+    # parser.add_argument("--beta", type=int, dest="beta", required=False, help="number of composed images to create",
+    #                     default=10)  
+    # parser.add_argument("--blur_value", type=int, dest="blur_value", required=False, help="number of composed images to create",
+    #                     default=5) 
+    # parser.add_argument("--folder", type=str, dest="folder", required=False, help="number of composed images to create",
+    #                     default='train_folderr') 
+    # parser.add_argument("--aug", type=bool, dest="aug", required=False, help="aug",
+    #                     default='False') 
 
 
 
@@ -447,7 +447,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
-    Image_augmentation(args.dataset,args.augmentation_type,args.HSV_value,args.alpha,args.beta,args.blur_value,args.folder,args.aug)
+    # Image_augmentation(args.dataset,args.augmentation_type,args.HSV_value,args.alpha,args.beta,args.blur_value,args.folder,args.aug)
     
     training = {'name': 'training',
                 'backgrounds_dir': '../datasets/f4/synth_dataset_training/input/backgrounds',
