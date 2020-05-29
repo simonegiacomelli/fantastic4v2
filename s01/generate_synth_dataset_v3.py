@@ -83,6 +83,10 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
     return out_pil, new_edges_norm
 
 
+def calc_area(bbox):
+    return 1234.5
+
+
 class AnnotationsJsonUtils:
     """ Creates a JSON definition file for coco dataset
     """
@@ -120,7 +124,7 @@ class AnnotationsJsonUtils:
             'id': annotation_id,
             'segmentation': segmentation,  # list of lists
             'iscrowd': 0,
-            # 'area': 1234.5,
+            'area': calc_area(bbox),
             'image_id': image_id,
             'category_id': category_id,
             'bbox': bbox
