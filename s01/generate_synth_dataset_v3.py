@@ -12,15 +12,18 @@ from PIL import Image, ImageEnhance
 from tqdm import tqdm
 
 
-def apply_random_homography(img_pil, max_scaling_factor=1.0):
+def apply_random_homography(img_pil, scaling_factor_range=(0.25, 1.0)
+                            , rotation_angle_range=(0, 360),
+                            skew_range=(0., .001)):
     img_np = np.array(img_pil)
 
     h, w = img_np.shape[:2]
 
     edges = [np.array([0, 0, 1]), np.array([w, 0, 1]), np.array([w, h, 1]), np.array([0, h, 1])]
 
-    theta = random.uniform(0, np.pi)  # Rotation angle
-    phi = random.uniform(0, np.pi)
+    radians = [np.deg2rad(d) for d in rotation_angle_range]
+    theta = random.uniform(*radians)  # Rotation angle
+    phi = random.uniform(*radians)
     # theta = np.pi / 2
     cosTheta = np.cos(theta)
     sinTheta = np.sin(theta)
@@ -28,10 +31,10 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
     cosPhi = np.cos(phi)
     sinPhi = np.sin(phi)
 
-    sx = random.uniform(0.25, max_scaling_factor)  # Scaling x
-    sy = random.uniform(0.25, max_scaling_factor)  # Scaling y
-    p1 = random.uniform(0., .001)
-    p2 = random.uniform(0., .001)
+    sx = random.uniform(*scaling_factor_range)  # Scaling x
+    sy = random.uniform(*scaling_factor_range)  # Scaling y
+    p1 = random.uniform(*skew_range)
+    p2 = random.uniform(*skew_range)
 
     R_theta = np.array([[cosTheta, -sinTheta],
                         [sinTheta, cosTheta]])  # Rotation theta matrix
@@ -359,7 +362,9 @@ class ImageComposition():
 
         fg_image = Image.open(fg_path)
 
-        fg_image, edges_rot = apply_random_homography(fg_image)
+        fg_image, edges_rot = apply_random_homography(fg_image, scaling_factor_range=(1, 1),
+                                                      rotation_angle_range=(0, 0),
+                                                      skew_range=(0., 0.))
 
         # Adjust foreground brightness
         brightness_factor = random.random() * .4 + .7  # Pick something between .7 and 1.1
