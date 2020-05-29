@@ -84,26 +84,37 @@ def apply_random_homography(img_pil, max_scaling_factor=1.0):
 
     return out_pil, new_edges_norm
 
-def Image_augmentation(dataset,augmentation_type,HSV_value,alpha,beta,blur_value,folder):
-    for d in dataset:
-        img = skimage.io.imread(d["file_name"])
-        if augmentation_type == 'HSV':
-            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            h, s, v = cv2.split(hsv)
-            lim = 255 - HSV_value
-            v[v > lim] = 255
-            v[v <= lim] += HSV_value
-            final_hsv = cv2.merge((h, s, v))
-            img_hsv = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
-            cv2.imwrite("%s" % (folder + '/images'+d["file_name"][-13:]), img_hsv)
-        
-        elif augmentation_type == 'contrast':
-            new_image = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
-            cv2.imwrite("%s" % (folder + '/images'+d["file_name"][-13:]), new_image)
+def Image_augmentation(dataset,augmentation_type,HSV_value,alpha,beta,blur_value,folder,aug):
+    if aug == True:
+    
+        for d in dataset:
+            print(d["file_name"])
+            img = skimage.io.imread(d["file_name"])
+            if augmentation_type == 'HSV':
+                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                h, s, v = cv2.split(hsv)
+                lim = 255 - HSV_value
+                v[v > lim] = 255
+                v[v <= lim] += HSV_value
+                final_hsv = cv2.merge((h, s, v))
+                img_hsv = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
+                cv2.imwrite("%s" % (folder + '/images'+'hsv'+ d["file_name"][-13:]), img_hsv)
+            
+            elif augmentation_type == 'contrast':
+                new_image = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+                cv2.imwrite("%s" % (folder + '/images'+ 'con' + 'mb' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
 
-        elif augmentation_type == 'median_blur':
-            new_image= cv2.medianBlur(img,blur_value)
-            cv2.imwrite("%s" % (folder + '/images'+d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
+            elif augmentation_type == 'median_blur':
+                print('working')
+                new_image= cv2.blur(img,blur_value)
+                cv2.imwrite("%s" % (folder + '/images'+ 'mb' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
+            
+            elif augmentation_type == 'blur':
+                new_image= cv2.blur(img,(blur_value,blur_value))
+                cv2.imwrite("%s" % (folder + '/images'+ 'b' +d["file_name"][-13:]), cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR))
+        else:
+            return
+    return
 
 
 
@@ -387,6 +398,7 @@ class ImageComposition():
         self._validate_and_process_args()
         self._generate_images()
 
+
     def preload_categories(self, anns):
         fg = self.foregrounds_dict
         classes = sorted([(sc, cl) for sc in fg for cl in fg[sc]])
@@ -397,6 +409,7 @@ class ImageComposition():
 
 if __name__ == "__main__":
     print('Shalini version')
+    
     import argparse
 
     parser = argparse.ArgumentParser(description="Synthetic Dataset generation")
@@ -423,6 +436,8 @@ if __name__ == "__main__":
                         default=5) 
     parser.add_argument("--folder", type=str, dest="folder", required=False, help="number of composed images to create",
                         default='train_folderr') 
+    parser.add_argument("--aug", type=bool, dest="aug", required=False, help="aug",
+                        default='False') 
 
 
 
@@ -431,7 +446,9 @@ if __name__ == "__main__":
     # parser.add_argument("--output_type", type=str, dest="output_type", help="png or jpg (default)")
 
     args = parser.parse_args()
-
+    
+    Image_augmentation(args.dataset,args.augmentation_type,args.HSV_value,args.alpha,args.beta,args.blur_value,args.folder,args.aug)
+    
     training = {'name': 'training',
                 'backgrounds_dir': '../datasets/f4/synth_dataset_training/input/backgrounds',
                 'foregrounds_dir': '../datasets/f4/synth_dataset_training/input/foregrounds',
@@ -442,13 +459,13 @@ if __name__ == "__main__":
                 'output_type': None}
 
     validation = {'name': 'validation',
-                  'backgrounds_dir': '../datasets/f4/synth_dataset_validation/input/backgrounds',
-                  'foregrounds_dir': '../datasets/f4/synth_dataset_validation/input/foregrounds',
-                  'output_dir': '../datasets/f4/synth_dataset_validation/output',
-                  'count': args.count,
-                  'width': 1080 / 2, 'height': 1080 / 2,
-                  'max_foregrounds': 1,
-                  'output_type': None}
+                'backgrounds_dir': '../datasets/f4/synth_dataset_validation/input/backgrounds',
+                'foregrounds_dir': '../datasets/f4/synth_dataset_validation/input/foregrounds',
+                'output_dir': '../datasets/f4/synth_dataset_validation/output',
+                'count': args.count,
+                'width': 1080 / 2, 'height': 1080 / 2,
+                'max_foregrounds': 1,
+                'output_type': None}
 
 
     class Arguments:
