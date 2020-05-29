@@ -133,7 +133,7 @@ class AnnotationsJsonUtils:
             'id': annotation_id,
             'segmentation': segmentation,  # list of lists
             'iscrowd': 0,
-            'area': calc_area(bbox),
+            'area': np.sum([calc_area(l) for l in segmentation]),
             'image_id': image_id,
             'category_id': category_id,
             'bbox': bbox
