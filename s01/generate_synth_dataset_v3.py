@@ -361,15 +361,16 @@ class ImageComposition():
     def _transform_foreground(self, fg, fg_path):
 
         fg_image = Image.open(fg_path)
-
-        fg_image, edges_rot = apply_random_homography(fg_image, scaling_factor_range=(1, 1),
-                                                      rotation_angle_range=(0, 0),
-                                                      skew_range=(0., 0.))
-
-        # Adjust foreground brightness
-        brightness_factor = random.random() * .4 + .7  # Pick something between .7 and 1.1
-        enhancer = ImageEnhance.Brightness(fg_image)
-        fg_image = enhancer.enhance(brightness_factor)
+        if self.args.no_augmentation:
+            fg_image, edges_rot = apply_random_homography(fg_image, scaling_factor_range=(1, 1),
+                                                          rotation_angle_range=(0, 0),
+                                                          skew_range=(0., 0.))
+        else:
+            fg_image, edges_rot = apply_random_homography(fg_image)
+            # Adjust foreground brightness
+            brightness_factor = random.random() * .4 + .7  # Pick something between .7 and 1.1
+            enhancer = ImageEnhance.Brightness(fg_image)
+            fg_image = enhancer.enhance(brightness_factor)
 
         return fg_image, edges_rot
 
@@ -398,37 +399,32 @@ if __name__ == "__main__":
     #                     and json files will be placed")
     parser.add_argument("--count", type=int, dest="count", required=False, help="number of composed images to create",
                         default=10)
+    parser.add_argument('--name', type=str, dest='name',
+                        help='the name of the dataset, must be either training or validation', default='training')
+    parser.add_argument('--no-augmentation', dest='no_augmentation', default=False, action="store_true")
     # parser.add_argument("--width", type=int, dest="width", required=True, help="output image pixel width")
     # parser.add_argument("--height", type=int, dest="height", required=True, help="output image pixel height")
     # parser.add_argument("--output_type", type=str, dest="output_type", help="png or jpg (default)")
 
     args = parser.parse_args()
 
-    training = {'name': 'training',
-                'backgrounds_dir': '../datasets/f4/synth_dataset_training/input/backgrounds',
-                'foregrounds_dir': '../datasets/f4/synth_dataset_training/input/foregrounds',
-                'output_dir': '../datasets/f4/synth_dataset_training/output',
-                'count': args.count,
-                'width': 1080 / 2, 'height': 1080 / 2,
-                'max_foregrounds': 1,
-                'output_type': None}
-
-    validation = {'name': 'validation',
-                  'backgrounds_dir': '../datasets/f4/synth_dataset_validation/input/backgrounds',
-                  'foregrounds_dir': '../datasets/f4/synth_dataset_validation/input/foregrounds',
-                  'output_dir': '../datasets/f4/synth_dataset_validation/output',
-                  'count': args.count,
-                  'width': 1080 / 2, 'height': 1080 / 2,
-                  'max_foregrounds': 1,
-                  'output_type': None}
+    # name = 'training'  # or 'validation'
+    name = args.name
+    dataset = {'name': ('%s' % name),
+               'backgrounds_dir': ('../datasets/f4/synth_dataset_%s/input/backgrounds' % name),
+               'foregrounds_dir': ('../datasets/f4/synth_dataset_%s/input/foregrounds' % name),
+               'output_dir': ('../datasets/f4/synth_dataset_%s/output' % name),
+               'count': args.count,
+               'width': 1080 / 2, 'height': 1080 / 2,
+               'max_foregrounds': 1,
+               'output_type': None}
 
 
     class Arguments:
         pass
 
 
-    all = [training, validation]
-    for dictionary in all:
-        d = Arguments()
-        d.__dict__ = dictionary
-        ImageComposition(d).main()
+    d = Arguments()
+    dataset.update(args.__dict__)
+    d.__dict__ = dataset
+    ImageComposition(d).main()
